@@ -1,5 +1,6 @@
 FROM python:3.6.12-slim-buster
 RUN pip install --upgrade pip
+RUN pip install nano
 RUN pip install jmespath
 RUN pip install requests
 RUN pip install ansible==2.6.1

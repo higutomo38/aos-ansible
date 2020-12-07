@@ -1,11 +1,11 @@
 ---
-- name: Post Virtual Network
+- name: Post VN Based Server Hostname
   hosts: aos_ip
   gather_facts: no
   connection: local
   tasks:
     - include_vars: main_vars.yml
-    - include_vars: virtual_network_vars.yml
+    - include_vars: post_vn_based_server_name_vars.yml
     - name: Get AOS Token
       uri:
         url: https://{{ aos_ip }}/api/user/login
@@ -45,7 +45,7 @@
 #        var: bp_id
 
     - name: Post Virtual Network on Leafs
-      post_virtual_network:
+      post_vn_based_server_name:
         arguments: {
           token: "{{ token }}",
           bp_id: "{{ bp_id }}",
@@ -64,5 +64,4 @@
     - name: Display Result
       debug:
         var: result
-
 ...
