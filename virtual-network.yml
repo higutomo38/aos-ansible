@@ -1,5 +1,5 @@
 ---
-- name: Post Virtual Networkk
+- name: Post Virtual Network
   hosts: aos_ip
   gather_facts: no
   connection: local
