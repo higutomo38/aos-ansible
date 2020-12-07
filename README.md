@@ -30,7 +30,7 @@ aos_pass: admin
 
 | Category | Playbook | Description | NOS |
 | --- | --- | --- | --- |
-| Blueprint | post_vn_based_server_name.yml | Post virtual network based on server hostname. Switch ports go selecting automatically | All |
+| Blueprint | post_vn_based_server_name.yml | Post virtual network based on server hostname. Switch ports go selecting automatically. (Note: All switch posts the servers link to are targeted. | All |
 
 ### **post_vn_based_server_name.yml**
 ```
