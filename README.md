@@ -13,14 +13,14 @@ docker run --name aos-ansible -it -w /tmp/aos-ansible higutomo38/aos-ansible:lat
 
 Set inventory
 ```
-$ vi inventory
+$ nano inventory
 [aos_ip]
 172.16.1.1 
 ```
 
 Set main_vars.yml
 ```
-$ vi ./vars/main_vars.yml
+$ nano ./vars/main_vars.yml
 aos_ip: 172.16.1.1
 aos_user: admin
 aos_pass: admin
@@ -32,9 +32,10 @@ aos_pass: admin
 | --- | --- | --- | --- |
 | Blueprint | post_vn_based_server_name.yml | Post virtual network based on server hostname. Switch ports go selecting automatically. (Note: All switch posts the servers link to are targeted. | All |
 
-### **post_vn_based_server_name.yml**
+### **Set yml files ***
+post_vn_based_server_name.yml
 ```
-$ vi ./vars/post_vn_based_server_name_vars.yml 
+$ nano ./vars/post_vn_based_server_name_vars.yml 
 vn_label: blue_131
 vlan_id: 131
 vni: 10131
