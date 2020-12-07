@@ -32,7 +32,7 @@ aos_pass: admin
 | --- | --- | --- | --- |
 | Blueprint | post_vn_based_server_name.yml | Post virtual network based on server hostname. Switch ports go selecting automatically. (Note: All switch posts the servers link to are targeted. | All |
 
-### **Set yml files ***
+### **Set yml files***
 post_vn_based_server_name.yml
 ```
 $ nano ./vars/post_vn_based_server_name_vars.yml 
