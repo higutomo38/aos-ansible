@@ -1,6 +1,6 @@
 # **AOS Ansible Module**
 
-AOS Ansible modules for demonstraton here are packaged as dockerhub repository "higutomo38/aos-ansible". Dockerhub builds the image automatically after github repo here goes updated.
+AOS Ansible modules for demonstration here are packaged as dockerhub repository "higutomo38/aos-ansible". Dockerhub builds the image automatically after github repo here goes updated.
 
 AOS Version: 3.3.0
 
@@ -26,9 +26,15 @@ aos_user: admin
 aos_pass: admin
 ```
 
-Set virtual_network_vars.yml
+## **Ansible Playbook**
+
+| Category | Playbook | Description | NOS |
+| --- | --- | --- | --- |
+| Blueprint | post_vn_based_server_name.yml | Post virtual network based on server hostname. Switch ports go selecting automatically | All |
+
+### **post_vn_based_server_name.yml**
 ```
-$ vi ./vars/virtual_network_vars.yml 
+$ vi ./vars/post_vn_based_server_name_vars.yml 
 vn_label: blue_131
 vlan_id: 131
 vni: 10131
@@ -41,8 +47,8 @@ server_list: [ rack1-server1, switch1-server1, switch2-server1, switch3-server1 
 
 Run ansible playbook
 ```
-$ ansible-playbook virtual-network.yml 
+$ ansible-playbook post_vn_based_server_name.yml
 ```
 
-## **Ansible Playbook**
+
 
