@@ -3,7 +3,7 @@ vn_label: blue_131
 vlan_id: 131
 vni: 10131
 security_zone: blue
-ipv4_subnet: 192.168.131.0/24
+ipv4_subnet: 192.168.131.0/24s
 virtual_gateway_ipv4: 192.168.131.1
 dhcp_service: dhcpServiceEnabled
 server_list: [ rack1-server1, switch1-server1, switch2-server1, switch3-server1 ]
