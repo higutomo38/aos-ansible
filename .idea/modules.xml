@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ansible_project.iml" filepath="$PROJECT_DIR$/.idea/ansible_project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../aos/.idea/aos.iml" filepath="$PROJECT_DIR$/../../../aos/.idea/aos.iml" />
-    </modules>
-  </component>
-</project>
