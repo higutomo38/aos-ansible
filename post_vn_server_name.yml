@@ -1,0 +1,101 @@
+---
+- name: Post VN Based Server Hostname
+  hosts: aos
+  gather_facts: no
+  connection: local
+  tasks:
+    - include_vars: main_vars.yml
+    - include_vars: post_vn_server_name_vars.yml
+    - include_vars: commit_vars.yml
+    - name: AOS - Post Virtual Network on Leafs
+      aos_post_vn_servername:
+        arguments: {
+          aos_user: "{{ aos_user }}",
+          aos_pass: "{{ aos_pass }}",
+          aos_ip: "{{ aos_ip }}",
+          bp_name: "{{ bp_name }}",
+          vn_label: "{{ vn_label }}",
+          vlan_id: "{{ vlan_id }}",
+          vni: "{{ vni }}",
+          security_zone: "{{ security_zone }}",
+          ipv4_subnet: "{{ ipv4_subnet }}",
+          virtual_gateway_ipv4: "{{ virtual_gateway_ipv4 }}",
+          dhcp_service: "{{ dhcp_service }}",
+          server_list: "{{ server_list }}"
+        }
+      register: result
+
+    - name: Targeted Leafs
+      debug:
+        var: result
+
+    - pause:
+        prompt: Deploy Blueprint (yes/no) ?
+      register: answer
+
+    - name: AOS - Commit and Deploy
+      aos_commit:
+        arguments: {
+          aos_user: "{{ aos_user }}",
+          aos_pass: "{{ aos_pass }}",
+          aos_ip: "{{ aos_ip }}",
+          bp_name: "{{ bp_name }}",
+          description: "{{ description }}",
+          answer: "{{ answer }}"
+        }
+      register: result
+
+    - name: Display Result
+      debug:
+        var: result
+
+    - name: Check Result
+      meta: end_play
+      when: result.Result == "Not Commit"
+
+    - name: AOS - Confirm deployment status
+      aos_deploy_status:
+        arguments: {
+          aos_user: "{{ aos_user }}",
+          aos_pass: "{{ aos_pass }}",
+          aos_ip: "{{ aos_ip }}",
+          bp_name: "{{ bp_name }}"
+        }
+      register: result
+
+    - name: Display Result
+      debug:
+        var: result
+
+    - name: Check Result
+      meta: end_play
+      when: result.Result == "failed"
+
+- name: Ping Overlay
+  hosts: aos
+  gather_facts: no
+  connection: ansible.netcommon.netconf
+  tasks:
+    - include_vars: main_vars.yml
+    - include_vars: post_vn_server_name_vars.yml
+    - name: JUNOS - Ping Overlay
+      junos_ping_overlay:
+        arguments: {
+          junos_user: "{{ junos_user }}",
+          junos_pass: "{{ junos_pass }}",
+          junos_ips: "{{ junos_ips }}",
+          vni: "{{ vni }}"
+        }
+      register: result
+
+    - name: Ping Overlay Results
+      debug:
+        var: result
+
+    - name: Copy Ping Results to local file
+      copy:
+        content: "{{ result.result }}"
+        dest: "./logs/ping_overlay.log"
+
+...
+

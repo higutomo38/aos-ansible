@@ -1,0 +1,1 @@
+{"172.20.120.13": [{"tunnel_src_ip": "10.0.0.2", "tunnel_dst_ip": "10.0.0.4", "result": "no response", "vni": 10131}, {"tunnel_src_ip": "10.0.0.2", "tunnel_dst_ip": "10.0.0.3", "result": "no response", "vni": 10131}], "172.20.120.14": [{"tunnel_src_ip": "10.0.0.4", "tunnel_dst_ip": "10.0.0.3", "result": "no response", "vni": 10131}]}

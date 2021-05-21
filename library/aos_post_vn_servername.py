@@ -1,7 +1,6 @@
 from ansible.module_utils.basic import *
+from ansible.module_utils.shared import LoginBlueprint
 from ansible.module_utils.shared import AosApi
-import json
-import requests
 
 
 class PostVN():
@@ -9,9 +8,10 @@ class PostVN():
     module = AnsibleModule(argument_spec=dict(
         arguments=dict(type='dict', required=True)))
     arguments = (module.params['arguments'])
-    token = arguments['token']
-    bp_id = arguments['bp_id']
+    aos_user = arguments['aos_user']
+    aos_pass = arguments['aos_pass']
     aos_ip = arguments['aos_ip']
+    bp_name = arguments['bp_name']
     vn_label = arguments['vn_label']
     vlan_id = arguments['vlan_id']
     vni = arguments['vni']
@@ -20,7 +20,10 @@ class PostVN():
     virtual_gateway_ipv4 = arguments['virtual_gateway_ipv4']
     dhcp_service = arguments['dhcp_service']
     server_list = arguments['server_list']
-    # module.exit_json(changed=False, arguments=dhcp_service)
+    token_bp_id_address = LoginBlueprint().blueprint(aos_user, aos_pass, aos_ip, bp_name)
+    token = token_bp_id_address[0]
+    bp_id = token_bp_id_address[1]
+    address = token_bp_id_address[2]
 
     def __init__(self):
         pass
@@ -55,7 +58,8 @@ class PostVN():
                  3. Delete duplicate logical system_id in the list by 'list(set)'.
         :note: AOS push VN config except for VN endpoint to these system on other method.
         """
-        leaf_list = PostVN.physical_leaf_list(self)
+        physical_leaf_list = PostVN.physical_leaf_list(self)
+        leaf_list = physical_leaf_list
         sys_rg_dict = { rg_sys['system']['id']:rg_sys['rg']['id'] \
                         for rg_sys in AosApi().bp_qe_post(PostVN.token, PostVN.bp_id, PostVN.aos_ip,
                         "node('redundancy_group', name='rg', rg_type='mlag')"\
@@ -106,7 +110,9 @@ class PostVN():
                        ipv4_subnet, virtual_gateway_ipv4, dhcp_service.
                 For building 'vn_template'.
                     -> logical_physical_leaf_list(self), vlan_id.
-        :return: Post Virtual Network 'vn_template' using 'vn_template'
+        :return: Post Virtual Network using 'vn_template'
+                 Return dict { leaf_hostname, leaf_mgmt_ip }
+                 Write leaf_ip to 'junos_vars'
         """
         vn_template = {
             "label": PostVN.vn_label,
@@ -120,7 +126,8 @@ class PostVN():
         }
         target_dict = {}
         target_list = []
-        for leaf_id in PostVN.logical_physical_leaf_list(self):
+        leaf_list = PostVN.logical_physical_leaf_list(self)
+        for leaf_id in leaf_list:
             target_dict["system_id"] = leaf_id
             target_dict["vlan_id"] = PostVN.vlan_id
             target_list.append(target_dict)
@@ -133,16 +140,27 @@ class PostVN():
             target_list.append(target_dict)
             target_dict = {}
         vn_template["endpoints"] = target_list
-        resp = requests.post('https://' + PostVN.aos_ip + '/api/blueprints/' + PostVN.bp_id + '/virtual-networks',
-                             headers={'AUTHTOKEN':PostVN.token, 'Content-Type':'application/json'},
-                             data=json.dumps(vn_template), verify=False)
-        if resp.status_code != 201: PostVN.module.fail_json(msg = resp.text)
-        else: PostVN.module.exit_json(changed = True, Successfully = 'Commit staged setting')
+
+        # Post Virtual Network
+        AosApi().bp_virtual_networks_post(PostVN.token, PostVN.bp_id, PostVN.aos_ip, vn_template)
+        # Get Leaf Hostname List
+        leaf_list = [ AosApi().bp_node_get_node_id(PostVN.token, PostVN.bp_id,
+                      PostVN.aos_ip, node_id)['hostname'] for node_id in leaf_list ]
+        # Return dict { leaf_hostname, leaf_mgmt_ip }
+        host_ip = {}
+        for agent in AosApi().system_agents_get(PostVN.token, PostVN.aos_ip)['items']:
+            if agent['device_facts']['hostname'] in leaf_list:
+                host_ip[agent['device_facts']['hostname']] = agent["running_config"]["management_ip"]
+        # Write Leaf IP to 'main_vars'
+        with open ('./vars/main_vars.yml', 'a') as f:
+            ip_list = [ str(ip) for ip in host_ip.values() ]
+            f.write("\njunos_ips: " + str(ip_list))
+        PostVN.module.exit_json(changed = True, Results = 'Set new virtual network', leafs = host_ip)
 
 if __name__ == '__main__':
     # PostVN()
     # PostVN().physical_leaf_list()
-    # PostVN().logical_physical_leaf_list()
+    # # PostVN().logical_physical_leaf_list()
     # PostVN().security_zone_id()
     # PostVN().endpoints()
     PostVN().post_virtual_network()

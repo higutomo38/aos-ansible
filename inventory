@@ -1,4 +1,5 @@
-[aos_ip]
-172.16.1.1
+[aos]
+172.20.120.3
 
-[servers]
+[aos:vars]
+ansible_python_interpreter=/Users/tomoyuki/.pyenv/shims/python

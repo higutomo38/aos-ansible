@@ -1,5 +1,8 @@
 ---
-aos_ip: 172.16.1.1
+aos_ip: 172.20.120.3
 aos_user: admin
 aos_pass: admin
-...
+bp_name: zz-tomo-evpn.vqfx_offbox.2485377892358-2357213926 - evpn-vqfx_offbox-virtual
+junos_user: root
+junos_pass: root123
+junos_ips: ['172.20.120.13', '172.20.120.14', '172.20.120.15']

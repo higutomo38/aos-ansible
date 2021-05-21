@@ -1,0 +1,10 @@
+---
+vn_label: vn_131
+vlan_id: 131
+vni: 10131
+security_zone: blue
+ipv4_subnet: 10.1.131.0/24
+virtual_gateway_ipv4: 10.1.131.1
+dhcp_service: dhcpServiceEnabled
+server_list: [ switch1-server1, switch2-server1, switch3-server1 ]
+...
